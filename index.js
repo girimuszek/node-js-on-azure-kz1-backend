@@ -1,12 +1,11 @@
 const express = require('express')
 app = express()
+const cors = require("cors")
 
-var url = require('url');
-var dt = require('./date-time');
 
 const port = process.env.PORT || 3000
-const majorVersion = 1
-const minorVersion = 2
+
+app.use(cors({ origin: '*' }))
 
 // Use Express to publish static HTML, CSS, and JavaScript files that run in the browser. 
 app.use(express.static(__dirname + '/static'))
@@ -30,10 +29,36 @@ app.get('/resume', (request, response) => {
     response.sendFile(path.join(__dirname, 'static', 'resume', 'index.html'));
 });
 
-// Establishes the web dice roller app
-app.get('/diceroll', (request, response) => {
+// Establishes the web dice roller app 
+app.get('/serverDiceRoll', (request, response) => {
     response.sendFile(path.join(__dirname, 'static', 'diceroll', 'index.html'));
 });
+
+// Establishes the web dice roller app
+app.get('/diceroll', (request, response) => {
+    response.sendFile(path.join(__dirname, 'static', 'serverDiceRoll', 'index.html'));
+});
+app.get('/roll', (request, response) => {
+    const type = request.query.type;
+
+    let sides;
+    if (type === 'd20') {
+        sides = 20;
+    } else if (type === 'd8') {
+        sides = 8;
+    } else {
+        return response.status(400).json({ error: 'Invalid die type. Use ?type=d20 or ?type=d8' });
+    }
+
+    const roll = Math.floor(Math.random() * sides) + 1;
+    response.json({ die: roll });
+});
+
+app.get('/ping', (request, response) => {
+    response.json({ message: 'Server is awake!' });
+});
+
+
 
 // Return the value of 2 plus 2.
 app.get('/2plus2', (request, response) => {
