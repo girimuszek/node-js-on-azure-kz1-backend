@@ -60,7 +60,6 @@ app.get('/ping', (request, response) => {
 });
 
 
-
 // Return the value of 2 plus 2.
 app.get('/2plus2', (request, response) => {
 	console.log('Calling "/2plus2" on the Node.js server.')
